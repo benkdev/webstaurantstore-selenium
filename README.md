@@ -1,7 +1,5 @@
 This repository contains automated test scripts for WebstaurantStore using Selenium WebDriver. The purpose of these tests is to simulate and validate user interactions with the WebstaurantStore website, focusing on functionalities such as searching for products, adding items to the cart, and verifying cart operations.
 
-# Note: Assertion for product title containing 'Table' currently fails for one product, which does not contain the word 'Table' in its title.
-
 ## Prerequisites
 
 Before you run the tests, make sure you have the following installed:
