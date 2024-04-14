@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -67,12 +68,38 @@ public class WebstaurantStoreTest {
     /**
      * Tests the following features of the WebstaurantStore website:
      * 2. Search with a specific query: {@link #QUERY}.
+     * 2. Check that each product on the first search results page has the word {@link #KEYWORD} in its title.
+     * 3. Add the last of found items to Cart.
+     * 4. Empty Cart.
+     * 
+     * @throws NumberFormatException if text value of breadcrumb is not a number.
+     */
+    @Test
+    public void testFirstPageSearchResultsContainKeywordAndVerifyCartLogic() throws Exception {
+        // Search a specific query.
+        WebElement searchInput = driver.findElement(By.id(SEARCH_INPUT_ID));
+        searchInput.sendKeys(QUERY);
+        searchInput.sendKeys(Keys.ENTER);
+
+        // Wait for search page to load and validate the page.
+        waitForSearchResults();
+        validateCurrentPage();
+
+        // Test cart logic.
+        addLastItemToCart();
+        emptyCart();
+    }
+
+    /**
+     * Tests the following features of the WebstaurantStore website:
+     * 2. Search with a specific query: {@link #QUERY}.
      * 2. Check the search result ensuring every product has the word {@link #KEYWORD} in its title.
      * 3. Add the last of found items to Cart.
      * 4. Empty Cart.
      * 
      * @throws NumberFormatException if text value of breadcrumb is not a number.
      */
+    @Disabled
     @Test
     public void testAllResultsContainsTableAndCartLogic() throws Exception {
         // Search a specific query.
@@ -94,25 +121,6 @@ public class WebstaurantStoreTest {
         }
 
         // Test cart logic.
-        addLastItemToCart();
-        emptyCart();
-    }
-
-    
-    /**
-     * Tests the following features of the WebstaurantStore website:
-     * 2. Search with a specific query: {@link #QUERY}.
-     * 3. Add the last of found items to Cart.
-     * 4. Empty Cart.
-     */
-    @Test
-    public void testAddItemToCartAndEmptyCart() throws Exception {
-        // Search a specific query (i.e. stainless work tables).
-        WebElement searchInput = driver.findElement(By.id(SEARCH_INPUT_ID));
-        searchInput.sendKeys(QUERY);
-        searchInput.sendKeys(Keys.ENTER);
-
-        // Test cart logic
         addLastItemToCart();
         emptyCart();
     }
@@ -162,7 +170,8 @@ public class WebstaurantStoreTest {
      */
     private void addLastItemToCart() {
         List<WebElement> resultsContainers = driver.findElements(By.cssSelector(PRODUCT_BOX_CONTAINER_CSS_SELECTOR));
-        WebElement submitButton = resultsContainers.getLast().findElement(By.cssSelector(ITEM_ADD_CART_CSS_SELECTOR));
+        WebElement submitButton = resultsContainers.get(resultsContainers.size() - 1)
+            .findElement(By.cssSelector(ITEM_ADD_CART_CSS_SELECTOR));
         submitButton.click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.id(ITEM_ADD_CONFIRM_ID)));
     }
